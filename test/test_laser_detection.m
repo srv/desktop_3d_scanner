@@ -1,6 +1,11 @@
 addpath('../tools');
+addpath('../stored_calibrations');
+
+%CameraCalibration=load('cameraCalibration.mat');
+%cameraParams=CameraCalibration.cameraCalibration;
 
 I = imread('test_image.jpg');
+%[I,newOrigin] = undistortImage(I,cameraParams,'OutputView', 'full');
 kernel = [0.000003	0.000229	0.005977	0.060598	0.24173	0.382925	0.24173	0.060598	0.005977	0.000229	0.000003];
 treshold = 0.8;
 window_size = 7;
