@@ -1,9 +1,17 @@
 I1 = rgb2gray(imread('https://es.mathworks.com/help/examples/vision/win64/FeatureBasedObjectDetectionExample_01.png'));
 I2 = rgb2gray(imread('https://es.mathworks.com/help/examples/vision/win64/FeatureBasedObjectDetectionExample_02.png'));
+%Markers and examples images
+m1=rgb2gray(imread('Marker1.jpg'));
+m2=rgb2gray(imread('Marker2.jpg'));
+m3=rgb2gray(imread('Marker3.jpg'));
+e1=rgb2gray(imread('example1.jpg'));
+e2=rgb2gray(imread('example2.jpg'));
+e3=rgb2gray(imread('example3.jpg'));
+e4=rgb2gray(imread('example4.jpg'));
 
 % Remove title and borders
-I1 = I1(100:(end-120),150:(end-150));
-I2 = I2(100:(end-120),150:(end-150));
+I1 = m2;             %I1(100:(end-120),150:(end-150));
+I2 = e4;            %I2(100:(end-120),150:(end-150));
 
 points1 = detectSURFFeatures(I1);
 points2 = detectSURFFeatures(I2);
@@ -15,7 +23,7 @@ points2 = detectSURFFeatures(I2);
 indexPairs = matchFeatures(f1, f2,...
   'Method', 'Exhaustive',...
   'MatchThreshold', 4.0,...
-  'Unique', false,...
+  'Unique', false,...                    
   'MaxRatio', 0.3);
 
 matchedPoints1 = vpts1(indexPairs(:, 1));
@@ -32,9 +40,9 @@ boxPolygon = [1, 1;...                           % top-left
         1, 1];                   % top-left again to close the polygon
 newBoxPolygon = transformPointsForward(tform, boxPolygon);
 
-figure(1)
+figure()
 showMatchedFeatures(I1,I2,matchedPoints1,matchedPoints2);
 legend('unique matched points 1','unique matched points 2');
-figure(2)
+figure()
 imshow(I2); hold on
 line(newBoxPolygon(:, 1), newBoxPolygon(:, 2), 'Color', 'y');

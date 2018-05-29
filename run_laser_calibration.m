@@ -1,13 +1,14 @@
-addpath('../external/epnp');
-addpath('../external/ransac');
-addpath('../stored_calibrations');
-addpath('../laser_calibration');
-CameraCalibration=load('C:\Users\Propietario\Documents\GitHub\desktop_3d_scanner\stored_calibrations\cameraCalibration.mat');
+%addpath('../external/epnp');
+%addpath('../external/ransac');
+addpath(genpath('C:\Users\Propietario\Documents\GitHub\desktop_3d_scanner'));
+%addpath stored_calibrations;
+%addpath laser_calibration;
+CameraCalibration=load('cameraCalibration.mat');
 cameraParams=CameraCalibration.cameraCalibration;
 numImages = 6;
 files = cell(1, numImages);
  for i = 1:numImages
-    files{i} = fullfile('C:','Program Files','MATLAB', 'TFG', sprintf('bcap%d.jpg', i));
+    files{i} = fullfile( sprintf('bcap%d.jpg', i));
  end
  %% Find the laser plane
  im=[];
