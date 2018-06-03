@@ -1,6 +1,6 @@
-%addpath('../external/epnp');
-%addpath('../external/ransac');
-addpath(genpath('C:\Users\Propietario\Documents\GitHub\desktop_3d_scanner'));
+%addpath('external/epnp');
+%addpath('external/ransac');
+addpath(genpath('.'));
 %addpath stored_calibrations;
 %addpath laser_calibration;
 CameraCalibration=load('cameraCalibration.mat');
