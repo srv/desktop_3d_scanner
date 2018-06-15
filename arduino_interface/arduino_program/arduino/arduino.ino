@@ -4,10 +4,10 @@
 *   de l'escànner 3D.
 *
 **************************************************************/
-#include <TimerOne.h>
+#include "TimerOne.h"
 
 // Durada d'un pols de la sortida 'step' per a efectuar un pas.
-const int pulse_duration_ms = 2
+const int pulse_duration_ms = 2;
 
 //Representació simbòlica dels pins conectats al driver i al sensor òptic (obp).
 #define analog_obp A5
@@ -22,15 +22,17 @@ const int pin_enable = 6;
 const int pin_fault = 5;
 const int pin_obp = 4;
 
-const int opb_threshold = 24;
-int opb_value;
-bool at_home_position;
+int count;
+const int step_count = 25;  // 5.625deg
 
 // Dur a terme un pas
 void RotateStep(){
+  if (count < step_count) {
     digitalWrite(pin_bot, HIGH);
     delayMicroseconds(pulse_duration_ms);
     digitalWrite(pin_bot, LOW);
+    count++;
+  }
 }
 
 // Configure la velocitat d'escaneig i inicialització del temporitzador
@@ -38,42 +40,17 @@ void Configure(const int& period){
     Timer1.stop();
     Timer1.detachInterrupt();
 
-    if (!at_home_position){
-        GoHome();
-    }
     if (period != 0){
         Serial.write("Scanning at ");
         Serial.write(period);
         Timer1.initialize(period);
         Timer1.attachInterrupt(RotateStep);
-        at_home_position = false;
     }
-}
-
-// Recerca del punt de referència
-void GoHome(){
-    int i;
-    opb_value = analogRead(analog_obp);
-    while(opb_value > opb_threshold && i < 40) {
-        RotateStep();
-        opb_value=analogRead(analog_obp);
-        delay(5);
-        if(opb_value > opb_threshold) {
-            i++;
-        }
-    }
-    while(opb_value < opb_threshold) {
-        RotateStep();
-        opb_value=analogRead(analog_obp);
-        delay(2);
-    }
-
-    at_home_position = true;
-    Serial.write("GoHome complete.");
 }
 
 // Inicialització dels d'entrades i sortides i del node de ROS
 void setup(){
+  count = 0;
     pinMode(pin_dir, OUTPUT);
     pinMode(pin_bot, OUTPUT);
     pinMode(pin_sleep, OUTPUT);
@@ -102,6 +79,11 @@ void setup(){
 void loop(){
     if(Serial.available()>0) {
         int period = Serial.parseInt();
-        Configure(period);
+        if (period > 0) {
+          Configure(period);
+        } else if (period == 0) {
+          Serial.write("Stepping...");
+          count = 0;
+        }
     }
 }
