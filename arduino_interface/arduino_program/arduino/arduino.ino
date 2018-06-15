@@ -23,7 +23,10 @@ const int pin_fault = 5;
 const int pin_obp = 4;
 
 int count;
-const int step_count = 25;  // 5.625deg
+//const int step_count = 25;  // 5.625deg
+const int step_count = 5;  // 1.125deg
+//const int step_count = 400;  // 90deg
+
 
 // Dur a terme un pas
 void RotateStep(){
@@ -31,7 +34,12 @@ void RotateStep(){
     digitalWrite(pin_bot, HIGH);
     delayMicroseconds(pulse_duration_ms);
     digitalWrite(pin_bot, LOW);
+    //Serial.println("STEP N");
     count++;
+  }
+  if(count == step_count){
+   Serial.println("STEP DONE");
+   count++;
   }
 }
 
