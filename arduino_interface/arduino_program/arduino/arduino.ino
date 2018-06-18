@@ -23,7 +23,8 @@ const int pin_fault = 5;
 const int pin_obp = 4;
 
 int count;
-const int step_count = 25;  // 5.625deg
+//const int step_count = 25;  // 5.625deg
+const int step_count = 5;  // 1.125deg
 
 // Dur a terme un pas
 void RotateStep(){
@@ -72,16 +73,15 @@ void setup(){
     digitalWrite(pin_obp, HIGH);
 
     Serial.begin(9600);
+    Configure(1000);
     Serial.write("Arduino is ready.");
 }
 
 // Bucle infinit a l'espera d'interrupcions
 void loop(){
     if(Serial.available()>0) {
-        int period = Serial.parseInt();
-        if (period > 0) {
-          Configure(period);
-        } else if (period == 0) {
+        int enable_turn = Serial.parseInt();
+        if (enable_turn == 0) {
           Serial.write("Stepping...");
           count = 0;
         }

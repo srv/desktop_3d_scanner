@@ -24,7 +24,7 @@
 #include "WProgram.h"
 #endif
 
-#include "config/known_16bit_timers.h"
+//#include "config/known_16bit_timers.h"
 #if defined (__AVR_ATtiny85__)
 #define TIMER1_RESOLUTION 256UL  // Timer1 is 8 bit
 #elif defined(__AVR__)
