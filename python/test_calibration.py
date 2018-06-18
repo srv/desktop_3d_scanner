@@ -15,6 +15,7 @@ objpoints = [] # 3d point in real world space
 imgpoints = [] # 2d points in image plane.
 
 images = glob.glob('*.png')
+images = glob.glob('C:\Users\Propietario\Documents\GitHub\desktop_3d_scanner\camera_calibration\*.png')
 
 for fname in images:
     img = cv2.imread(fname)
@@ -41,6 +42,9 @@ ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.sh
 # It's very important to transform the matrix to list.
 
 data = {'camera_matrix': np.asarray(mtx).tolist(), 'dist_coeff': np.asarray(dist).tolist()}
+np.save("cameraCalib.npy",data)
+np.save("cameraCalibMatrix.npy",mtx)
+np.save("cameraCalibDistCoeff.npy",dist)
 
 with open("calibration.yaml", "w") as f:
     yaml.dump(data, f)

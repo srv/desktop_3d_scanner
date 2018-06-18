@@ -52,8 +52,6 @@ if ser.isOpen():
         print("read data: " + response) #Check information from Arduino
         time.sleep(0.5)
         
-        ser.write("100") #config the period
-        time.sleep(1)    #give the serial port sometime to receive the data
         
         i=0
         while i<10:
