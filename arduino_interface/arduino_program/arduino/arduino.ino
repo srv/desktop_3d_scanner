@@ -25,6 +25,7 @@ const int pin_obp = 4;
 int count;
 //const int step_count = 25;  // 5.625deg
 const int step_count = 5;  // 1.125deg
+//const int step_count = 400;  // 90deg
 
 // Dur a terme un pas
 void RotateStep(){
@@ -32,7 +33,12 @@ void RotateStep(){
     digitalWrite(pin_bot, HIGH);
     delayMicroseconds(pulse_duration_ms);
     digitalWrite(pin_bot, LOW);
+    //Serial.println("STEP N");
     count++;
+  }
+  if(count == step_count){
+   Serial.println("STEP DONE");
+   count++;
   }
 }
 
@@ -42,8 +48,6 @@ void Configure(const int& period){
     Timer1.detachInterrupt();
 
     if (period != 0){
-        Serial.write("Scanning at ");
-        Serial.write(period);
         Timer1.initialize(period);
         Timer1.attachInterrupt(RotateStep);
     }
@@ -73,15 +77,15 @@ void setup(){
     digitalWrite(pin_obp, HIGH);
 
     Serial.begin(9600);
-    Configure(1000);
+    Configure(100);
     Serial.write("Arduino is ready.");
 }
 
 // Bucle infinit a l'espera d'interrupcions
 void loop(){
-    if(Serial.available()>0) {
+    if(Serial.available() > 0) {
         int enable_turn = Serial.parseInt();
-        if (enable_turn == 0) {
+        if (enable_turn) {
           Serial.write("Stepping...");
           count = 0;
         }
