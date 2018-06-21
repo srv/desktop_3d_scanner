@@ -21,7 +21,7 @@ kernel_size = size(kernel, 2);
 c = conv2(red_ch,kernel);
 [~, indices] = max(c, [], 2);
 peaks = [];
-for i=1:size(I,1)
+for i=1:size(rgb_image,1)
   j =  indices(i)-(kernel_size-1)/2;
   % Detect only high values for laser
   if red_ch(i, j) > threshold

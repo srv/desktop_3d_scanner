@@ -26,7 +26,7 @@ def detect_laser_subpixel(img, kernel, threshold, window_size):
     #%%
     # Get subpixel accuracy: Compute the Gaussian approximation or weight mass
     # centre of the surrounding pixels for each detected peak:
-    subpixel_peaks = []
+    subpixel_peaks = np.array([[],[]]).T
     for point in peaks:
         row, col = point[0]
         value = np.log(g[row, col])
@@ -49,6 +49,6 @@ def detect_laser_subpixel(img, kernel, threshold, window_size):
                 m = m + value_k
             offset = mx / m
         peak = np.array([[float(row), float(col) + offset]], np.float32)
-        subpixel_peaks.append(peak)
+        subpixel_peaks=np.concatenate((subpixel_peaks,peak))
     #%%
     return subpixel_peaks

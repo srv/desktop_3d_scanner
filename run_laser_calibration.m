@@ -20,7 +20,7 @@ files = cell(1, numImages);
  squareSize = 0.040; %in meters
  A=cameraParams.IntrinsicMatrix(:,1:3);
  kernel = [0.000003	0.000229	0.005977	0.060598	0.24173	0.382925	0.24173	0.060598	0.005977	0.000229	0.000003];
- treshold = 0.8;
+ threshold = 0.8;
  window_size = 7;
 for i=1:numImages
 %1.-Detect points on image----------------------    
