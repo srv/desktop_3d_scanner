@@ -9,9 +9,11 @@ Created on Thu Jun  7 11:31:52 2018
 from laser_detector import detect_laser_subpixel
 import cv2
 import numpy as np
+import glob
 from math import isnan
     
-img = cv2.imread('/home/miquel/git/3d_rotating_table_laser/laser_calibration/bcap1.jpg')
+images = glob.glob('C:\Users\Propietario\Documents\GitHub\desktop_3d_scanner\laser_calibration\bcap1.jpg')
+img = cv2.imread(images)
 kernel = np.array([[0.000003, 0.000229, 0.005977, 0.060598, 0.24173, 0.382925, 0.24173, 0.060598, 0.005977, 0.000229, 0.000003]], np.float32);
 threshold = 0.1;
 window_size = 7;

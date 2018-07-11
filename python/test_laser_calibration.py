@@ -63,7 +63,7 @@ objp = np.zeros((6*8,3), np.float32)
 objp[:,:2] = np.mgrid[0:8,0:6].T.reshape(-1,2)*0.04
 
 #laserp = np.zeros((6*8,3), np.float32)
-laserp = np.array([])
+laser_points = np.array([])
 
 
 for fname in images:
@@ -106,7 +106,7 @@ for fname in images:
                 img = cv2.circle(img,(int(y),int(x)),15,(0,0,255),1)
                 #Interseccion between planeCalib and point of laser 
                 new_point = intersection(planeCam,p,camera_matrix)
-                laser_points=np.concatenate((laserp,new_point))
+                laser_points=np.concatenate((laser_points,new_point))
             
 #    cv2.imshow('Laser Image', img)
     

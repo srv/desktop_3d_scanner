@@ -9,6 +9,8 @@ Created on Thu Jun  7 16:55:01 2018
 import cv2
 import numpy as np
 
+EPS = 1e-7
+
 def detect_laser_subpixel(img, kernel, threshold, window_size):
     #%%
     b,g,r = cv2.split(img)
@@ -33,8 +35,8 @@ def detect_laser_subpixel(img, kernel, threshold, window_size):
         value_prev = np.log(g[row,col-1])
         value_next = np.log(g[row, col+1])
         offset = 0
-        if value_prev+value_next-2*value is not 0:
-            offset = 1/2*((value_prev-value_next)/(value_prev+value_next-2*value));
+        if value_prev+value_next-2*value > EPS or  value_prev+value_next-2*value < -EPS:
+            offset = 1/2*((value_prev-value_next)/(value_prev+value_next-2*value))
         if abs(offset) > 1:
             mx = 0.0
             m = 0.0
