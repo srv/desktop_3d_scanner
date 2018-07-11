@@ -76,9 +76,9 @@ def rotate_points(frame,points):
     calculate_rotation(frame)
     
 #------------------------------MAIN--------------------------------------------
-camera_matrix = np.load("cameraCalibMatrix.npy")
-dist_coeffs = np.load("cameraCalibDistCoeff.npy")
-laser_plane = np.load("LaserPlane.npy")
+camera_matrix = np.load("cameraCalibMatrix2.npy")
+dist_coeffs = np.load("cameraCalibDistCoeff2.npy")
+laser_plane = np.load("LaserPlane2.npy")
 
 ser = serial.Serial()
 ser.port = "COM12"
@@ -101,21 +101,19 @@ table_postition = np.identity(4)
 viewer  = ReconstructionViewer()
 
 
-
-
 # La matriu de rotació d'un pas de motor (4x4)
-table_increment = np.array([[0.984,-0.17,0,0],
-                       [0.17,0.984,0,0],
+table_increment = np.array([[0.999807,-0.01963,0,0],
+                       [0.01963,0.999807,0,0],
                        [0,0,1,0],
                        [0,0,0,1]])
 
 # La transformació del sistema de coordenades càmera a la taula (calibració, 4x4)
 camera2table = np.identity(4)
 #R,tvec = calculate_rotation(frame)
-camera2table[0:3,0:3]=np.array([[-0.01928059,  0.86148886,  0.50741029],
-       [ 0.8258581 ,  0.29977915, -0.47758859],
-       [-0.56354828,  0.4098407 , -0.71724747]])
-camera2table[0:3,3]=np.array([[[-0.38124459,  0.00950547,  0.9195212 ]]])
+camera2table[0:3,0:3]=np.array([[ 0.37572923,  0.89664238,  0.2342221 ],
+       [ 0.62754291, -0.06019223, -0.77625176],
+       [-0.68192187,  0.4386449 , -0.58529754]])
+camera2table[0:3,3]=np.array([[[-0.3379647 , -0.12153296,  0.87844024]]])
   
 
 cap = cv2.VideoCapture(0)
@@ -136,19 +134,27 @@ if ser.isOpen():
         response = ser.readline()
         print("read data: " + response) #Check information from Arduino
         time.sleep(0.5)
+        response=1
         
         step=0
-#        while step<10:
-        for fname in images:
-            frame = cv2.imread(fname)
-            ret=True
+        while step<300:
+#        for fname in images:
+#            frame = cv2.imread(fname)
+#            ret=True
             
             #Perform a step    
             ser.write("0") 
             time.sleep(1)
             
+            
+#            while (response is not 1):
+#                response = ser.readline()
+#                print("read data: " + response) #Check information from Arduino
+#                time.sleep(0.5)
+#            response = 0    
+            
             # Capture frame-by-frame
-#            ret, frame = cap.read()
+            ret, frame = cap.read()
             
             if ret==True:
                 
@@ -171,7 +177,8 @@ if ser.isOpen():
                         
                   # Per transformar els punts respecte a la càmara a punts
                   # respecte la taula, cal aplicar la transformació
-                table2points = -camera2table*table_postition
+#                table2points = -camera2table*table_postition
+                table2points = np.matmul(-camera2table,table_postition)
 
                 viewer.append(laser_points, table2points)
                 viewer.drawnow()
@@ -181,15 +188,19 @@ if ser.isOpen():
                 
                 
                 table_postition = np.matmul(table_postition, table_increment)
+                
+                print step
+                
+                step=step+1
             else:
                 cap.release()
                 cv2.destroyAllWindows()
                 cap = cv2.VideoCapture(0)
                 _,frame = cap.read()
                 
-            step=step+1
+            
         
-#        ser.close()
+        ser.close()
         print "Bucle acabado"
         viewer.run()
 

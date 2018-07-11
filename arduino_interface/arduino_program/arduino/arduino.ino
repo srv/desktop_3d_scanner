@@ -37,7 +37,7 @@ void RotateStep(){
     count++;
   }
   if(count == step_count){
-   Serial.println("STEP DONE");
+   Serial.println("1");
    count++;
   }
 }

@@ -59,7 +59,7 @@ if ser.isOpen():
             ser.write("0")
             time.sleep(1)
             
-            #Wait untill STEP IS DONE
+#            Wait untill STEP IS DONE
 #            response = ser.readline()
 #            print("read data: " + response) #Check information from Arduino
 #            time.sleep(0.5)
