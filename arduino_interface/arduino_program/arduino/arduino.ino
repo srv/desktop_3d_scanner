@@ -7,7 +7,7 @@
 #include "TimerOne.h"
 
 // Durada d'un pols de la sortida 'step' per a efectuar un pas.
-const int pulse_duration_ms = 2;
+const int pulse_duration_ms = 200;
 
 //Representació simbòlica dels pins conectats al driver i al sensor òptic (obp).
 #define analog_obp A5
@@ -37,7 +37,7 @@ void RotateStep(){
     count++;
   }
   if(count == step_count){
-   Serial.println("1");
+   Serial.println("0");
    count++;
   }
 }
@@ -77,7 +77,7 @@ void setup(){
     digitalWrite(pin_obp, HIGH);
 
     Serial.begin(9600);
-    Configure(100);
+    Configure(10000);
     Serial.write("Arduino is ready.");
 }
 

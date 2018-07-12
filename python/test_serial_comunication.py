@@ -54,9 +54,9 @@ if ser.isOpen():
         
         
         i=0
-        while i<10:
+        while i<200:
                 
-            ser.write("0")
+            ser.write("1")
             time.sleep(1)
             
 #            Wait untill STEP IS DONE

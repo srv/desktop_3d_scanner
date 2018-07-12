@@ -72,13 +72,13 @@ def calculate_rotation(frame):
     return (R,tvecs)
         
     
-def rotate_points(frame,points):
-    calculate_rotation(frame)
+#def rotate_points(frame,points):
+#    calculate_rotation(frame)
     
 #------------------------------MAIN--------------------------------------------
-camera_matrix = np.load("cameraCalibMatrix2.npy")
-dist_coeffs = np.load("cameraCalibDistCoeff2.npy")
-laser_plane = np.load("LaserPlane2.npy")
+camera_matrix = np.load("cameraCalibMatrix3.npy")
+dist_coeffs = np.load("cameraCalibDistCoeff3.npy")
+laser_plane = np.load("LaserPlane3.npy")
 
 ser = serial.Serial()
 ser.port = "COM12"
@@ -109,14 +109,22 @@ table_increment = np.array([[0.999807,-0.01963,0,0],
 
 # La transformació del sistema de coordenades càmera a la taula (calibració, 4x4)
 camera2table = np.identity(4)
-#R,tvec = calculate_rotation(frame)
-camera2table[0:3,0:3]=np.array([[ 0.37572923,  0.89664238,  0.2342221 ],
-       [ 0.62754291, -0.06019223, -0.77625176],
-       [-0.68192187,  0.4386449 , -0.58529754]])
-camera2table[0:3,3]=np.array([[[-0.3379647 , -0.12153296,  0.87844024]]])
+
+#camera2table[0:3,0:3]=np.array([[ 0.37572923,  0.89664238,  0.2342221 ],
+#       [ 0.62754291, -0.06019223, -0.77625176],
+#       [-0.68192187,  0.4386449 , -0.58529754]])
+camera2table[0:3,0:3]=np.array([[-0.20223907, -0.91075492,  0.36003449],
+       [-0.63157544, -0.15967696, -0.75869344],
+       [ 0.748473  , -0.3808264 , -0.54291752]])
+#camera2table[0:3,3]=np.array([[[-0.3379647 , -0.12153296,  0.87844024]]])
+camera2table[0:3,3]=np.array([[[-0.38777067, -0.13432474,  0.92294953]]])
   
 
 cap = cv2.VideoCapture(0)
+ret, frame = cap.read()
+            
+if ret==True:
+    R,tvec = calculate_rotation(frame)
 
 try: 
     ser.open()
@@ -137,13 +145,13 @@ if ser.isOpen():
         response=1
         
         step=0
-        while step<300:
+        while step<1:
 #        for fname in images:
 #            frame = cv2.imread(fname)
 #            ret=True
             
             #Perform a step    
-            ser.write("0") 
+            ser.write("1") 
             time.sleep(1)
             
             
@@ -157,9 +165,7 @@ if ser.isOpen():
             ret, frame = cap.read()
             
             if ret==True:
-                
-                # undistort
-#                frame2 = cv2.undistort(frame, camera_matrix, dist_coeffs, None)
+                cv2.imshow('Laser Image', frame)
                 subpixel_peaks = detect_laser_subpixel(frame, kernel, threshold, window_size)
 #                rectified_points = subpixel_peaks
                 subpixel_peaks= np.expand_dims(subpixel_peaks, 1)
@@ -171,6 +177,8 @@ if ser.isOpen():
                     x = p[0,0]
                     y = p[0,1]
                     if not isnan(x) and not isnan(y):
+                        frame = cv2.circle(frame,(int(y),int(x)),15,(0,0,255),1)
+                        cv2.imshow('Laser Image', frame)
                         #Interseccion between planeLaser and point (u,v) 
                         new_point = intersection(laser_plane,(x,y),camera_matrix)
                         laser_points=np.concatenate((laser_points,new_point))
@@ -198,8 +206,7 @@ if ser.isOpen():
                 cap = cv2.VideoCapture(0)
                 _,frame = cap.read()
                 
-            
-        
+                  
         ser.close()
         print "Bucle acabado"
         viewer.run()

@@ -47,13 +47,13 @@ def fitPlane(norm,point):
     D=-np.sum(norm*point)
     return(A,B,C,D)
 
-camera_matrix = np.load("cameraCalibMatrix2.npy")
-dist_coeffs = np.load("cameraCalibDistCoeff2.npy")
+camera_matrix = np.load("cameraCalibMatrix3.npy")
+dist_coeffs = np.load("cameraCalibDistCoeff3.npy")
 
 # termination criteria- plane[3]/np.sum([plane[0:2]*point,plane[2]])
 criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
-images = glob.glob('C:\Users\Propietario\Documents\GitHub\desktop_3d_scanner\python\calib_images\Laser\*.png')
+images = glob.glob('C:\Users\Propietario\Documents\GitHub\desktop_3d_scanner\python\calib_images\Laser\CalibracioLaser1207\*.png')
 #images = glob.glob('C:\Users\Propietario\Documents\GitHub\desktop_3d_scanner\laser_calibration\*.jpg')
 kernel = np.array([[0.000003, 0.000229, 0.005977, 0.060598, 0.24173, 0.382925, 0.24173, 0.060598, 0.005977, 0.000229, 0.000003]], np.float32);
 threshold = 0.1;
@@ -105,6 +105,7 @@ for fname in images:
             y = p[1]
             if not isnan(x) and not isnan(y):
                 img = cv2.circle(img,(int(y),int(x)),15,(0,0,255),1)
+                cv2.imshow('Laser Image', img)
                 #Interseccion between planeCalib and point of laser 
                 new_point = intersection(planeCam,p,camera_matrix)
                 laser_points=np.concatenate((laser_points,new_point))
@@ -131,7 +132,7 @@ a, b, c, d = laser_plane
 xx, yy, zz = plot_plane(a, b, c, d)
 ax.plot_surface(xx, yy, zz, color=(0, 1, 0, 0.5))
    
-np.save("LaserPlane2.npy",laser_plane)
+np.save("LaserPlane3.npy",laser_plane)
 
 cv2.waitKey(10000)
-cv2.destroyAllWindows()
+#cv2.destroyAllWindows()
