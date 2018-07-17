@@ -17,6 +17,23 @@ from matplotlib import pylab
 from mpl_toolkits import mplot3d
 from pointcloud_viewer import ReconstructionViewer
 
+
+def outOfBounds(point,tvec):
+    #Si la x esta fuera de los limites de la mesa
+    if point[0]>tvec[0]+0.15:
+        return True
+    elif point[0]<tvec[0]-0.15:
+        return True
+    #O la coordenada y esta fuera de los limites
+    elif point[1]>tvec[1]+0.15:
+        return True
+    elif point[1]<tvec[1]+0.15:
+        return True
+    else:
+        return False
+    #Sino se considerara como un punto acceptable    
+
+
 def intersection(plane,point,mtx):
     fx = mtx[0,0]
     fy = mtx[1,1]
@@ -91,7 +108,7 @@ criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
 images = glob.glob('C:\Users\Propietario\Documents\GitHub\desktop_3d_scanner\laser_calibration\*.jpg')
 kernel = np.array([[0.000003, 0.000229, 0.005977, 0.060598, 0.24173, 0.382925, 0.24173, 0.060598, 0.005977, 0.000229, 0.000003]], np.float32)
-threshold = 0.1
+threshold = 0.2
 window_size = 7
 
 detected_points = np.array([[],[],[]]).T
@@ -118,7 +135,7 @@ camera2table[0:3,0:3]=np.array([[-0.20223907, -0.91075492,  0.36003449],
        [ 0.748473  , -0.3808264 , -0.54291752]])
 #camera2table[0:3,3]=np.array([[[-0.3379647 , -0.12153296,  0.87844024]]])
 camera2table[0:3,3]=np.array([[[-0.38777067, -0.13432474,  0.92294953]]])
-  
+tvec = np.array([-0.38777067, -0.13432474,  0.92294953])
 
 cap = cv2.VideoCapture(0)
 ret, frame = cap.read()
@@ -145,7 +162,7 @@ if ser.isOpen():
         response=1
         
         step=0
-        while step<1:
+        while step<300:
 #        for fname in images:
 #            frame = cv2.imread(fname)
 #            ret=True
@@ -165,7 +182,9 @@ if ser.isOpen():
             ret, frame = cap.read()
             
             if ret==True:
-                cv2.imshow('Laser Image', frame)
+                write_name = 'step_num'+str(step)+'.jpg'
+                cv2.imwrite(write_name, frame)
+#                cv2.imshow('Laser Image', frame)
                 subpixel_peaks = detect_laser_subpixel(frame, kernel, threshold, window_size)
 #                rectified_points = subpixel_peaks
                 subpixel_peaks= np.expand_dims(subpixel_peaks, 1)
@@ -181,6 +200,7 @@ if ser.isOpen():
                         cv2.imshow('Laser Image', frame)
                         #Interseccion between planeLaser and point (u,v) 
                         new_point = intersection(laser_plane,(x,y),camera_matrix)
+#                        if not outOfBounds(new_point,tvec):
                         laser_points=np.concatenate((laser_points,new_point))
                         
                   # Per transformar els punts respecte a la càmara a punts

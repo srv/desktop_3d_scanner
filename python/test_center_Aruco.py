@@ -6,6 +6,7 @@ Created on Mon Jun 18 16:04:54 2018
 """
 import numpy as np
 import cv2
+import glob
 
 def fitPlane(norm,point):
     A=norm[0]
@@ -25,6 +26,7 @@ while cap.isOpened()==False:
 dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
 #dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_ARUCO_ORIGINAL)
 marker_length=0.03 #in meters 
+#images = glob.glob('C:\Users\Propietario\Documents\GitHub\desktop_3d_scanner\python\DataOffline\*.png')
 
 while(True):
     while cap.isOpened()==False:
@@ -34,6 +36,8 @@ while(True):
     ret, frame = cap.read()
     
     if ret==True:
+        frame = cv2.imread('C:\Users\Propietario\Documents\GitHub\desktop_3d_scanner\python\DataOffline\TableCalib.jpg')
+
         # Our operations on the frame come here
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         
@@ -76,6 +80,9 @@ while(True):
             
         # Display the resulting frame
         cv2.imshow('frame',gray)
+        write_name = 'DataOffline/CalibracioAruco.jpg'
+        cv2.imwrite(write_name, frame)
+        
         
         if cv2.waitKey(10):
             if 0xFF == ord('q'):
@@ -88,6 +95,8 @@ while(True):
         cap.release()
         cv2.destroyAllWindows()
         cap = cv2.VideoCapture(0)
+        
+    
 
 # When everything done, release the capture
 cap.release()
