@@ -47,16 +47,16 @@ def fitPlane(norm,point):
     D=-np.sum(norm*point)
     return(A,B,C,D)
 
-camera_matrix = np.load("cameraCalibMatrix3.npy")
-dist_coeffs = np.load("cameraCalibDistCoeff3.npy")
+camera_matrix = np.load("cameraCalibMatrix4.npy")
+dist_coeffs = np.load("cameraCalibDistCoeff4.npy")
 
 # termination criteria- plane[3]/np.sum([plane[0:2]*point,plane[2]])
 criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
-images = glob.glob('C:\Users\Propietario\Documents\GitHub\desktop_3d_scanner\python\calib_images\Laser\CalibracioLaser1207\*.png')
+images = glob.glob('C:\Users\Propietario\Documents\GitHub\desktop_3d_scanner\python\calib_images\Laser\Calibracio17_07\*.jpg')
 #images = glob.glob('C:\Users\Propietario\Documents\GitHub\desktop_3d_scanner\laser_calibration\*.jpg')
 kernel = np.array([[0.000003, 0.000229, 0.005977, 0.060598, 0.24173, 0.382925, 0.24173, 0.060598, 0.005977, 0.000229, 0.000003]], np.float32);
-threshold = 0.1;
+threshold = 0.01;
 window_size = 7;
 
 # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
@@ -70,6 +70,12 @@ laser_points = np.array([])
 for fname in images:
     img = cv2.imread(fname)
     gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+    
+    
+    # undistort
+    h, w = gray.shape[:2]
+    newcamera, roi = cv2.getOptimalNewCameraMatrix(camera_matrix, dist_coeffs, (w,h), 0)
+    frame = cv2.undistort(gray, camera_matrix, dist_coeffs, None, newcamera)
 
     # Arrays to store object points and image points from all the images.
     objpoints = np.array([]) # 3d point in real world space
@@ -86,7 +92,7 @@ for fname in images:
 #        imgpoints=np.concatenate((imgpoints,corners2))
 
         # Draw and display the corners
-        img = cv2.drawChessboardCorners(img, (8,6), corners2,ret)
+#        img = cv2.drawChessboardCorners(img, (8,6), corners2,ret)
         cv2.imshow('img',img)
         cv2.waitKey(10)
         
@@ -132,7 +138,7 @@ a, b, c, d = laser_plane
 xx, yy, zz = plot_plane(a, b, c, d)
 ax.plot_surface(xx, yy, zz, color=(0, 1, 0, 0.5))
    
-np.save("LaserPlane3.npy",laser_plane)
+np.save("LaserPlane4.npy",laser_plane)
 
 cv2.waitKey(10000)
 #cv2.destroyAllWindows()

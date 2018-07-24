@@ -147,9 +147,9 @@ tvec = np.array([-0.38777067, -0.13432474,  0.92294953])
 
 
 step=1
-while step<100:
+while step<321:
 
-    fname = '/home/miquel/git/3d_rotating_table_laser/python/DataOffline/step_num_table'+str(step)+'.jpg'
+    fname = 'C:\Users\Propietario\Documents\GitHub\desktop_3d_scanner\python\DataOffline\step_num_table'+str(step)+'.jpg'
     print fname
     frameTable = cv2.imread(fname)
 
@@ -158,7 +158,7 @@ while step<100:
         camera_to_table_1[0:3,0:3]=R
         camera_to_table_1[0:3,3]=tvec
 
-    fname = '/home/miquel/git/3d_rotating_table_laser/python/DataOffline/step_num'+str(step)+'.jpg'
+    fname = 'C:\Users\Propietario\Documents\GitHub\desktop_3d_scanner\python\DataOffline\step_num'+str(step)+'.jpg'
     frame = cv2.imread(fname)
     h, w = frame.shape[:2]
 
@@ -184,6 +184,7 @@ while step<100:
 #        rectified_points = cv2.undistortPoints(subpixel_peaks, camera_matrix, dist_coeffs)
 
         laser_points = np.array([[],[],[]]).T
+        print "Punts rectificats, nomes x y"
         for p in rectified_points:
             x = p[0,0]
             y = p[0,1]
@@ -192,12 +193,14 @@ while step<100:
             table_2_to_camera = np.matmul(table_2to1, table_1_to_camera)
 
             if not isnan(x) and not isnan(y):
+                print p
                 frame = cv2.circle(frame,(int(y),int(x)),15,(0,0,255),1)
                 # cv2.imshow('Laser Image', frame)
                 #Interseccion between planeLaser and point (u,v)
                 new_point = intersection(laser_plane,(x,y),camera_matrix)
-                new_point = table_2_to_camera[:3,:3] * new_point + table_2_to_camera[:3,3:]
-                laser_points=np.concatenate((laser_points,new_point))
+#                new_point = table_2_to_camera[:3,:3] * new_point + table_2_to_camera[:3,3:]
+                new_point2 =np.matmul(table_2_to_camera[:3,:3], new_point.T)+table_2_to_camera[:3,3:]
+                laser_points=np.concatenate((laser_points,new_point2.T))
 
         viewer.append(laser_points, np.identity(4))
         viewer.drawnow()

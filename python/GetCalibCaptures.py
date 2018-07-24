@@ -10,6 +10,8 @@ import cv2
 import time
 
 cap = cv2.VideoCapture(0)
+cap.set(cv2.CV_CAP_PROP_FRAME_WIDTH,1920.0) #620 -- property 3
+cap.set(cv2.CV_CAP_PROP_FRAME_HEIGHT,1080.0) #480 -- property 4
 step=0
 
 while(True):
@@ -22,8 +24,9 @@ while(True):
     # Display the resulting frame
     cv2.imshow('frame',gray)
     time.sleep(1)
-    write_name = 'calib_images/Camera/Calibracio17_07/Image'+str(step)+'.jpg'
-#    write_name = 'DataOffline/TableCalib.jpg'
+    write_name = 'calib_images/Camera/Calibracio20_07/Image'+str(step)+'.jpg'
+#    write_name = 'calib_images/Laser/Calibracio20_07/Image'+str(step)+'.jpg'
+
     cv2.imwrite(write_name, frame)
     step=step+1
     if cv2.waitKey(1) & 0xFF == ord('q'):

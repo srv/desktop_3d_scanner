@@ -15,6 +15,8 @@ ser.baudrate = 9600
 ser.timeout = 1 
 
 cap = cv2.VideoCapture(0)
+cap.set(cv2.CV_CAP_PROP_FRAME_WIDTH,1920) #620
+cap.set(cv2.CV_CAP_PROP_FRAME_HEIGHT,1080) #480
 
 try: 
     ser.open()
@@ -43,9 +45,8 @@ if ser.isOpen():
             
             if ret==True:
                 step=step+1
-                write_name = 'DataOffline/step_num'+str(step)+'.jpg'
-                write_name = 'DataOffline/step_num_table'+str(step)+'.jpg'
-#                write_name = 'DataOffline/TableCalib.jpg'
+                write_name = 'DataOffline2/step_num'+str(step)+'.jpg'
+                write_name = 'DataOffline2/Table/step_num_table'+str(step)+'.jpg'
                 print step
                 cv2.imwrite(write_name, frame)
     except Exception, e1:
